@@ -24,8 +24,15 @@ function checkPassword() {
     const errorMsg = document.getElementById("error-msg");
 
     if (input === PASSCODE) {
+        // Play Music on first interaction
+        const music = document.getElementById("bg-music");
+        if (music && music.paused) {
+            music.volume = 0.5;
+            music.play().catch(console.error);
+        }
+
         document.getElementById("login-screen").classList.add("hidden");
-        document.getElementById("survey-screen").classList.remove("hidden");
+        playIntro();
     } else {
         passwordAttempts++;
         if (passwordAttempts === 1) {
@@ -39,89 +46,19 @@ function checkPassword() {
     }
 }
 
-// --- STEP 2: SURVEY ---
-// --- STEP 2: SURVEY ---
-function nextQuestion(qNum, answer) {
-    const feedback = document.getElementById("survey-feedback");
 
-    // Play Music on first interaction
-    const music = document.getElementById("bg-music");
-    if (qNum === 1 && music && music.paused) {
-        music.volume = 0.5;
-        music.play().catch(console.error);
-    }
 
-    // Show Feedback
-    feedback.classList.remove("hidden");
-    feedback.innerText = getRandomRoast(qNum, answer);
-
-    // Wait then Move
-    setTimeout(() => {
-        feedback.classList.add("hidden");
-        document.getElementById(`q${qNum}`).classList.add("hidden");
-
-        if (qNum < 3) {
-            document.getElementById(`q${qNum + 1}`).classList.remove("hidden");
-        } else {
-            document.getElementById("survey-screen").classList.add("hidden");
-            playIntro();
-        }
-    }, 700); // reduced from 1500 to 700ms
-}
-
-function getRandomRoast(q, ans) {
-    if (q === 1) return ans === 'yes' ? "GOOD." : "IT WAS NEVER A CHOICE.";
-    if (q === 2) return "CORRECT ANSWER.";
-    if (q === 3) return "SYSTEM APPROVED.";
-    return "PROCESSING...";
-}
-
-// --- STEP 3: INTRO ---
 // --- STEP 3: INTRO ---
 function playIntro() {
     document.getElementById("intro-screen").classList.remove("hidden");
     setTimeout(() => {
         document.getElementById("intro-screen").classList.add("hidden");
-        // Go to Proposal instead of Game
-        document.getElementById("proposal-screen").classList.remove("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+        initGame();
     }, 5000); // 5s intro duration
 }
 
-// --- STEP 3.5: PROPOSAL ---
-let noCount = 0;
-function handleNoClick() {
-    noCount++;
-    const btnYes = document.getElementById("btn-yes");
-    const btnNo = document.getElementById("btn-no");
 
-    // Grow Yes Button
-    const baseSize = 1; // scale
-    const newScale = baseSize + (noCount * 1.5); // Grow significantly
-    btnYes.style.transform = `scale(${newScale})`;
-
-    // Messages
-    const phrases = ["No", "Are you sure?", "Really sure?", "Pookie please?", "You break my heart!", "Last chance!"];
-    btnNo.innerText = phrases[Math.min(noCount, phrases.length - 1)];
-
-    if (noCount >= 5) {
-        // Full screen cover
-        btnYes.style.position = "fixed";
-        btnYes.style.top = "0";
-        btnYes.style.left = "0";
-        btnYes.style.width = "100vw";
-        btnYes.style.height = "100vh";
-        btnYes.style.fontSize = "50px";
-        btnYes.style.transform = "none"; // Reset scale for full screen
-        btnYes.innerText = "YES! (I Knew It) 💖";
-        btnNo.classList.add("hidden");
-    }
-}
-
-function handleYesClick() {
-    document.getElementById("proposal-screen").classList.add("hidden");
-    document.getElementById("game-screen").classList.remove("hidden");
-    initGame();
-}
 
 // --- STEP 4: GAME LOGIC ---
 function initGame() {
@@ -308,39 +245,15 @@ function createRain(container, emoji) {
 
 // --- DAY 3: CHOCOLATE ANIMATION ---
 function playChocolateAnimation(stage, msgBox, data) {
-    let clickCount = 0;
-    const totalClicks = 5;
-
-    stage.innerHTML = `
-        <div style="text-align:center;">
-            <h2 style="color:var(--gold); margin-bottom:20px;">Click the chocolate bar ${totalClicks} times!</h2>
-            <div id="chocolate-bar" style="font-size:120px; cursor:pointer; transition:transform 0.1s;">🍫</div>
-            <p id="click-counter" style="color:#fff; margin-top:20px; font-size:18px;">Clicks: 0/${totalClicks}</p>
-        </div>
-    `;
-
-    const chocolateBar = document.getElementById("chocolate-bar");
-    const counter = document.getElementById("click-counter");
-
-    chocolateBar.onclick = () => {
-        clickCount++;
-        counter.innerText = `Clicks: ${clickCount}/${totalClicks}`;
-
-        // Shake animation
-        chocolateBar.style.transform = "scale(0.9) rotate(-5deg)";
+    // Play chocolate video
+    stage.innerHTML = `<video src="chocolate day video.mp4" autoplay playsinline id="chocolate-video" style="width:100%; height:100%; object-fit:contain; max-height:80vh;"></video>`;
+    document.getElementById("chocolate-video").onended = () => {
+        unleashChocolateBlast(stage);
         setTimeout(() => {
-            chocolateBar.style.transform = "scale(1) rotate(0deg)";
-        }, 100);
-
-        if (clickCount >= totalClicks) {
-            chocolateBar.style.pointerEvents = "none";
-            unleashChocolateBlast(stage);
-            setTimeout(() => {
-                msgBox.classList.remove("hidden");
-                document.getElementById("modal-title").innerText = data.title;
-                document.getElementById("modal-body").innerText = data.msg;
-            }, 2000);
-        }
+            msgBox.classList.remove("hidden");
+            document.getElementById("modal-title").innerText = data.title;
+            document.getElementById("modal-body").innerText = data.msg;
+        }, 2000);
     };
 }
 
