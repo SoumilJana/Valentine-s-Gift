@@ -7,7 +7,7 @@ const levels = [
     { date: "2026-02-07", title: "ROSE DAY", icon: "🌹", msg: "I sent this meow to get flowers for you", anim: "cat" },
     { date: "2026-02-08", title: "PROPOSE DAY", icon: "💍", msg: "Emo Dogo brings you the RING", anim: "dog" },
     { date: "2026-02-09", title: "CHOCOLATE DAY", icon: "🍫", msg: "Coupon: Good for ONE Silk Oreo. Redeemable anytime.", anim: "chocolate" },
-    { date: "2026-02-10", title: "TEDDY DAY", icon: "🧸", msg: "Sending you a virtual squeeze. I'm your permanent teddy bear.", anim: "rain" },
+    { date: "2026-02-10", title: "TEDDY DAY", icon: "🧸", msg: "Sending you a virtual squeeze. I'm your permanent teddy bear.", anim: "teddy" },
     { date: "2026-02-11", title: "PROMISE DAY", icon: "🤝", msg: "Pawwmiz 🐾.", anim: "promise" },
     { date: "2026-02-12", title: "HUG DAY", icon: "🤗", msg: "Extreme tigh hug for my girl.", anim: "hug" },
     { date: "2026-02-13", title: "KISS DAY", icon: "💋", msg: "Muah! Can't wait to see you.", anim: "kiss" },
@@ -81,6 +81,16 @@ function initGame() {
     }
 
     currentLevelIndex = maxLevel;
+
+    // Update Level Display
+    const levelDisplay = document.getElementById("current-level-display");
+    if (levelDisplay) {
+        if (maxLevel === 7) {
+            levelDisplay.innerText = "BOSS";
+        } else {
+            levelDisplay.innerText = Math.max(1, maxLevel + 1);
+        }
+    }
 
     // 2. Render Board
     board.innerHTML = '<div id="player-token">👑</div>'; // Reset
@@ -199,6 +209,14 @@ function playCinema(index) {
     } else if (data.anim === "kiss") {
         playKissAnimation(stage, msgBox, data);
         return; // Early return, message shown in animation
+    } else if (data.anim === "teddy") {
+        // Play teddy bear toss video
+        stage.innerHTML = `<video src="Teddy_Bear_Toss_Video_Generation.mp4" autoplay playsinline id="teddy-video" style="width:100%; height:100%; object-fit:contain; max-height:80vh;"></video>`;
+        document.getElementById("teddy-video").onended = () => {
+            createRain(modal, "🧸");
+            createRain(modal, "💖");
+            createRain(modal, "✨");
+        };
     } else if (data.anim === "rain") {
         createRain(stage, data.icon); // Keep existing rain inside stage for others
     } else {
