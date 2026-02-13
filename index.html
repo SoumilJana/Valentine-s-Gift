@@ -72,6 +72,12 @@
     </audio>
 
     <script src="config.js"></script>
+    <script>
+        // Maintenance Mode Check
+        if (typeof CONFIG !== 'undefined' && CONFIG.MAINTENANCE_MODE) {
+            window.location.href = 'maintenance.html';
+        }
+    </script>
     <script src="script.js"></script>
 </body>
 

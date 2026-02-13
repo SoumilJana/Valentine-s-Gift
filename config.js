@@ -1,6 +1,7 @@
 const CONFIG = {
     // Master Switch
     DEV_MODE: false,
+    MAINTENANCE_MODE: true,   // If true, redirects to maintenance.html
 
     // Features 
     FORCE_ALL_UNLOCKED: false, // If true, all levels are playable regardless of date
