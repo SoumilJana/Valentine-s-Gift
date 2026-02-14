@@ -209,6 +209,9 @@ function playCinema(index) {
     } else if (data.anim === "kiss") {
         playKissAnimation(stage, msgBox, data);
         return; // Early return, message shown in animation
+    } else if (data.anim === "finale") {
+        playFinaleExperience(stage, msgBox, data);
+        return; // Early return, custom finale flow
     } else if (data.anim === "teddy") {
         // Play teddy bear toss video
         stage.innerHTML = `<video src="Teddy_Bear_Toss_Video_Generation.mp4" autoplay playsinline id="teddy-video" style="width:100%; height:100%; object-fit:contain; max-height:80vh;"></video>`;
